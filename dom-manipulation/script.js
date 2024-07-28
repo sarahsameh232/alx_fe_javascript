@@ -14,7 +14,15 @@ function showRandomQuote() {
   const randomandomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomandomIndex];
   const quoteDisplay = document.getElementById("quoteDisplay");
-  quoteDisplay.innerHTML = `<p>${quote.text}</p><p><em>${quote.category}</em></p>`;
+  quoteDisplay.innerHTML = "";
+
+  const quoteTextElement = document.createElement("p");
+  quoteTextElement.textContent = quote.text;
+  const quoteCategoryElement = document.createElement("p");
+  quoteCategoryElement.innerHTML = `<em>${quote.category}</em>`;
+
+  quoteDisplay.appendChild(quoteTextElement);
+  quoteDisplay.appendChild(quoteCategoryElement);
 }
 
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
