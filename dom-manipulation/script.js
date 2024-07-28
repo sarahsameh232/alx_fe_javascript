@@ -52,7 +52,7 @@ async function syncQuotesWithServer() {
     localStorage.setItem("storedQuotes", JSON.stringify(quotes));
     populateCategories();
     showRandomQuote();
-    showNotification("Quotes updated from the server.");
+    showNotification("Quotes synced with server!");
   }
 }
 
