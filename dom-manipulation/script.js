@@ -61,10 +61,44 @@ function startPeriodicSync() {
   setInterval(syncQuotesWithServer, 60000); // Fetch new quotes every 60 seconds
 }
 
+// Function to add a new quote to the server
+async function addQuoteToServer(quote) {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(quote),
+    });
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const newQuote = await response.json();
+    return { text: newQuote.title, category: "Server" };
+  } catch (error) {
+    console.error("Error adding quote to server:", error);
+    return null;
+  }
+}
+
+// Example usage of addQuoteToServer function
+async function addNewQuote(quote) {
+  const newQuote = await addQuoteToServer(quote);
+  if (newQuote) {
+    quotes.push(newQuote);
+    localStorage.setItem("storedQuotes", JSON.stringify(quotes));
+    showNotification("New quote added to server and local storage.");
+  }
+}
+
+// Call the startPeriodicSync function to begin periodic sync
+startPeriodicSync();
+
 // Existing functions remain unchanged
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 //
-//starting the functions 
+//starting the functions
 function showRandomQuote() {
   const randomandomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomandomIndex];
@@ -159,8 +193,8 @@ function filterQuotesArray() {
 }
 // Function to show notifications
 function showNotification(message) {
-  const notification = document.createElement('div');
-  notification.className = 'notification';
+  const notification = document.createElement("div");
+  notification.className = "notification";
   notification.textContent = message;
   document.body.appendChild(notification);
 
