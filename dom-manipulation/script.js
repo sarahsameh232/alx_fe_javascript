@@ -16,6 +16,55 @@ console.log(quotes.length);
 //     category: "Hope",
 //   },
 
+const API_URL = "https://jsonplaceholder.typicode.com/posts";
+
+// Function to fetch quotes from the server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(API_URL);
+    const serverQuotes = await response.json();
+    return serverQuotes.map((quote) => ({
+      text: quote.title,
+      category: "Server",
+    }));
+  } catch (error) {
+    console.error("Error fetching quotes from server:", error);
+    return [];
+  }
+}
+
+// Function to sync quotes with the server
+async function syncQuotesWithServer() {
+  const serverQuotes = await fetchQuotesFromServer();
+
+  const newQuotes = [
+    ...serverQuotes,
+    ...quotes.filter(
+      (localQuote) =>
+        !serverQuotes.some(
+          (serverQuote) => serverQuote.text === localQuote.text
+        )
+    ),
+  ];
+
+  if (JSON.stringify(newQuotes) !== JSON.stringify(quotes)) {
+    quotes.splice(0, quotes.length, ...newQuotes);
+    localStorage.setItem("storedQuotes", JSON.stringify(quotes));
+    populateCategories();
+    showRandomQuote();
+    showNotification("Quotes updated from the server.");
+  }
+}
+
+// Function to start periodic sync
+function startPeriodicSync() {
+  setInterval(syncQuotesWithServer, 60000); // Fetch new quotes every 60 seconds
+}
+
+// Existing functions remain unchanged
+document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+//
+//starting the functions 
 function showRandomQuote() {
   const randomandomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomandomIndex];
@@ -107,4 +156,20 @@ function filterQuotesArray() {
     return quotes;
   }
   return quotes.filter((quote) => quote.category === selectedCategory);
+}
+// Function to show notifications
+function showNotification(message) {
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.textContent = message;
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+// Start periodic data sync
+function startPeriodicSync() {
+  setInterval(syncQuotesWithServer, 60000); // Fetch new quotes every 60 seconds
 }
