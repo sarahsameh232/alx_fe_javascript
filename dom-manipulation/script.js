@@ -1,14 +1,20 @@
-const quotes = [
-  { text: "No pain no gain", category: "Motivation" },
-  {
-    text: "There is no shame in failure as long as one try one's best",
-    category: "Inspiration",
-  },
-  {
-    text: "A whole stack of memories never equal one little hope",
-    category: "Hope",
-  },
-];
+// const quotes = [
+//   { text: "No pain no gain", category: "Motivation" },
+//   {
+//     text: "There is no shame in failure as long as one try one's best",
+//     category: "Inspiration",
+//   },
+//   {
+//     text: "A whole stack of memories never equal one little hope",
+//     category: "Hope",
+//   },
+// ];
+const quotes = JSON.parse(localStorage.getItem("storedQuotes") || "[]");
+console.log(quotes.length);
+//   {
+//     text: "A whole stack of memories never equal one little hope",
+//     category: "Hope",
+//   },
 
 function showRandomQuote() {
   const randomandomIndex = Math.floor(Math.random() * quotes.length);
@@ -39,7 +45,35 @@ function createAddQuoteForm() {
   }
   const newObj = { text: quoteText, category: quoteCategory };
   quotes.push(newObj);
+
+  localStorage.setItem("storedQuotes", JSON.stringify(quotes));
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
   alert("Your quote has been added");
+}
+document.getElementById("exportQuotes").addEventListener("click", exportQuotes);
+
+function exportQuotes() {
+  const quotesJSON = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([quotesJSON], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (event) {
+    const importedQuotes = JSON.parse(event.target.result);
+    quotes.push(...importedQuotes);
+    saveQuotes();
+    alert("Quotes imported successfully!");
+  };
+  fileReader.readAsText(event.target.files[0]);
 }
