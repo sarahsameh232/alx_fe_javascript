@@ -8,7 +8,6 @@ const quotes = [
     text: "A whole stack of memories never equal one little hope",
     category: "Hope",
   },
-
 ];
 
 function showRandomQuote() {
@@ -20,7 +19,7 @@ function showRandomQuote() {
 
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
-function addQuote() {
+function createAddQuoteForm() {
   const quoteText = document.getElementById("newQuoteText").value.trim();
   const quoteCategory = document
     .getElementById("newQuoteCategory")
