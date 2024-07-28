@@ -77,3 +77,34 @@ function importFromJsonFile(event) {
   };
   fileReader.readAsText(event.target.files[0]);
 }
+
+function populateCategories() {
+  const categories = [...new Set(quotes.map((quote) => quote.category))];
+  const categoryFilter = document.getElementById("categoryFilter");
+
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+
+  // Set the last selected category
+  categoryFilter.value = lastSelectedCategory;
+}
+
+// Function to filter quotes based on the selected category
+function filterQuotes() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  localStorage.setItem("selectedCategory", selectedCategory);
+  showRandomQuote();
+}
+
+// Function to filter the quotes array based on the selected category
+function filterQuotesArray() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  if (selectedCategory === "all") {
+    return quotes;
+  }
+  return quotes.filter((quote) => quote.category === selectedCategory);
+}
